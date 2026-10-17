@@ -1,0 +1,994 @@
+{
+  "contract_version": "1.0-draft",
+  "simulated": true,
+  "note": "Actual outputs from the deterministic local mock service. They are synthetic and do not represent live FalkorDB query results. Use these as mock-adapter fixtures.",
+  "tools": {
+    "get_alert_context": {
+      "input": {
+        "ip": "203.0.113.45"
+      },
+      "output": {
+        "ok": true,
+        "tool": "get_alert_context",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "ip": "203.0.113.45",
+          "city": null,
+          "is_public_network": false,
+          "network_kind": "unknown",
+          "degree": 4,
+          "first_seen": "2026-09-29T06:03:00Z",
+          "last_seen": "2026-09-29T06:12:00Z",
+          "indicators": [
+            {
+              "id": "TI-001",
+              "feed": "FEED-ALPHA",
+              "severity": "high",
+              "seen_at": "2026-09-30T00:00:00Z",
+              "expires_at": null,
+              "reliability": 0.9,
+              "note": "SIMULATED: suspicious activity reported",
+              "note_is_untrusted": true
+            },
+            {
+              "id": "TI-002",
+              "feed": "FEED-BETA",
+              "severity": "low",
+              "seen_at": "2026-09-30T12:00:00Z",
+              "expires_at": null,
+              "reliability": 0.65,
+              "note": "SIMULATED: no abuse seen; contradicts other feed",
+              "note_is_untrusted": true
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-017",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-30T00:00:00Z",
+            "source": "FEED-ALPHA",
+            "relationship": "ip:203.0.113.45 -[FLAGGED_BY]-> ti:TI-001",
+            "subject_ids": [
+              "ip:203.0.113.45",
+              "ti:TI-001"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-018",
+            "tier": "OBSERVED",
+            "reliability": 0.65,
+            "timestamp": "2026-09-30T12:00:00Z",
+            "source": "FEED-BETA",
+            "relationship": "ip:203.0.113.45 -[FLAGGED_BY]-> ti:TI-002",
+            "subject_ids": [
+              "ip:203.0.113.45",
+              "ti:TI-002"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "accounts_on_ip": {
+      "input": {
+        "ip": "203.0.113.45",
+        "since_days": 30,
+        "max_nodes": 50
+      },
+      "output": {
+        "ok": true,
+        "tool": "accounts_on_ip",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "ip": "203.0.113.45",
+          "total_matching": 4,
+          "returned": 4,
+          "accounts": [
+            {
+              "id": "A1",
+              "created_at": "2026-07-04T00:00:00Z",
+              "first_seen": "2026-09-29T06:03:00Z",
+              "last_seen": "2026-09-29T06:03:00Z",
+              "count": 1,
+              "evidence_id": "EV-001"
+            },
+            {
+              "id": "A2",
+              "created_at": "2026-07-05T00:00:00Z",
+              "first_seen": "2026-09-29T06:06:00Z",
+              "last_seen": "2026-09-29T06:06:00Z",
+              "count": 1,
+              "evidence_id": "EV-002"
+            },
+            {
+              "id": "A3",
+              "created_at": "2026-07-06T00:00:00Z",
+              "first_seen": "2026-09-29T06:09:00Z",
+              "last_seen": "2026-09-29T06:09:00Z",
+              "count": 1,
+              "evidence_id": "EV-003"
+            },
+            {
+              "id": "A4",
+              "created_at": "2026-07-07T00:00:00Z",
+              "first_seen": "2026-09-29T06:12:00Z",
+              "last_seen": "2026-09-29T06:12:00Z",
+              "count": 1,
+              "evidence_id": "EV-004"
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-001",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:03:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A1 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A1",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-002",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:06:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A2 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A2",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-003",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:09:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A3 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A3",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-004",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:12:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A4 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A4",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "shared_devices": {
+      "input": {
+        "account_id": "A1",
+        "max_nodes": 50
+      },
+      "output": {
+        "ok": true,
+        "tool": "shared_devices",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "account_id": "A1",
+          "devices": [
+            {
+              "id": "DEV-RING-1",
+              "device_type": "mobile",
+              "degree": 3,
+              "is_hub": false,
+              "accounts": [
+                {
+                  "id": "A1",
+                  "evidence_id": "EV-005"
+                },
+                {
+                  "id": "A2",
+                  "evidence_id": "EV-006"
+                },
+                {
+                  "id": "A3",
+                  "evidence_id": "EV-007"
+                }
+              ]
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-005",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A1 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A1",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-006",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A2 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A2",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-007",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A3 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A3",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "find_paths": {
+      "input": {
+        "src": "acct:A1",
+        "dst": "acct:A3",
+        "max_hops": 4
+      },
+      "output": {
+        "ok": true,
+        "tool": "find_paths",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "src": "acct:A1",
+          "dst": "acct:A3",
+          "paths": [
+            {
+              "hops": 2,
+              "nodes": [
+                {
+                  "id": "acct:A1",
+                  "type": "Account",
+                  "label": "A1",
+                  "degree": 0
+                },
+                {
+                  "id": "txn:TX-0003",
+                  "type": "Transaction",
+                  "label": "TX-0003",
+                  "degree": 0
+                },
+                {
+                  "id": "acct:A3",
+                  "type": "Account",
+                  "label": "A3",
+                  "degree": 0
+                }
+              ],
+              "edges": [
+                {
+                  "from": "acct:A1",
+                  "to": "txn:TX-0003",
+                  "type": "SENDS_TO",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-016"
+                },
+                {
+                  "from": "txn:TX-0003",
+                  "to": "acct:A3",
+                  "type": "INITIATED",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-015"
+                }
+              ]
+            },
+            {
+              "hops": 2,
+              "nodes": [
+                {
+                  "id": "acct:A1",
+                  "type": "Account",
+                  "label": "A1",
+                  "degree": 0
+                },
+                {
+                  "id": "dev:DEV-RING-1",
+                  "type": "Device",
+                  "label": "DEV-RING-1",
+                  "degree": 3
+                },
+                {
+                  "id": "acct:A3",
+                  "type": "Account",
+                  "label": "A3",
+                  "degree": 0
+                }
+              ],
+              "edges": [
+                {
+                  "from": "acct:A1",
+                  "to": "dev:DEV-RING-1",
+                  "type": "USES_DEVICE",
+                  "tier": "OBSERVED",
+                  "reliability": 0.9,
+                  "evidence_id": "EV-005"
+                },
+                {
+                  "from": "dev:DEV-RING-1",
+                  "to": "acct:A3",
+                  "type": "USES_DEVICE",
+                  "tier": "OBSERVED",
+                  "reliability": 0.9,
+                  "evidence_id": "EV-007"
+                }
+              ]
+            },
+            {
+              "hops": 4,
+              "nodes": [
+                {
+                  "id": "acct:A1",
+                  "type": "Account",
+                  "label": "A1",
+                  "degree": 0
+                },
+                {
+                  "id": "txn:TX-0001",
+                  "type": "Transaction",
+                  "label": "TX-0001",
+                  "degree": 0
+                },
+                {
+                  "id": "acct:A2",
+                  "type": "Account",
+                  "label": "A2",
+                  "degree": 0
+                },
+                {
+                  "id": "txn:TX-0002",
+                  "type": "Transaction",
+                  "label": "TX-0002",
+                  "degree": 0
+                },
+                {
+                  "id": "acct:A3",
+                  "type": "Account",
+                  "label": "A3",
+                  "degree": 0
+                }
+              ],
+              "edges": [
+                {
+                  "from": "acct:A1",
+                  "to": "txn:TX-0001",
+                  "type": "INITIATED",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-011"
+                },
+                {
+                  "from": "txn:TX-0001",
+                  "to": "acct:A2",
+                  "type": "SENDS_TO",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-012"
+                },
+                {
+                  "from": "acct:A2",
+                  "to": "txn:TX-0002",
+                  "type": "INITIATED",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-013"
+                },
+                {
+                  "from": "txn:TX-0002",
+                  "to": "acct:A3",
+                  "type": "SENDS_TO",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-014"
+                }
+              ]
+            },
+            {
+              "hops": 4,
+              "nodes": [
+                {
+                  "id": "acct:A1",
+                  "type": "Account",
+                  "label": "A1",
+                  "degree": 0
+                },
+                {
+                  "id": "txn:TX-0001",
+                  "type": "Transaction",
+                  "label": "TX-0001",
+                  "degree": 0
+                },
+                {
+                  "id": "acct:A2",
+                  "type": "Account",
+                  "label": "A2",
+                  "degree": 0
+                },
+                {
+                  "id": "dev:DEV-RING-1",
+                  "type": "Device",
+                  "label": "DEV-RING-1",
+                  "degree": 3
+                },
+                {
+                  "id": "acct:A3",
+                  "type": "Account",
+                  "label": "A3",
+                  "degree": 0
+                }
+              ],
+              "edges": [
+                {
+                  "from": "acct:A1",
+                  "to": "txn:TX-0001",
+                  "type": "INITIATED",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-011"
+                },
+                {
+                  "from": "txn:TX-0001",
+                  "to": "acct:A2",
+                  "type": "SENDS_TO",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-012"
+                },
+                {
+                  "from": "acct:A2",
+                  "to": "dev:DEV-RING-1",
+                  "type": "USES_DEVICE",
+                  "tier": "OBSERVED",
+                  "reliability": 0.9,
+                  "evidence_id": "EV-006"
+                },
+                {
+                  "from": "dev:DEV-RING-1",
+                  "to": "acct:A3",
+                  "type": "USES_DEVICE",
+                  "tier": "OBSERVED",
+                  "reliability": 0.9,
+                  "evidence_id": "EV-007"
+                }
+              ]
+            },
+            {
+              "hops": 4,
+              "nodes": [
+                {
+                  "id": "acct:A1",
+                  "type": "Account",
+                  "label": "A1",
+                  "degree": 0
+                },
+                {
+                  "id": "txn:TX-0001",
+                  "type": "Transaction",
+                  "label": "TX-0001",
+                  "degree": 0
+                },
+                {
+                  "id": "acct:A2",
+                  "type": "Account",
+                  "label": "A2",
+                  "degree": 0
+                },
+                {
+                  "id": "ip:203.0.113.45",
+                  "type": "IP",
+                  "label": "203.0.113.45",
+                  "degree": 4
+                },
+                {
+                  "id": "acct:A3",
+                  "type": "Account",
+                  "label": "A3",
+                  "degree": 0
+                }
+              ],
+              "edges": [
+                {
+                  "from": "acct:A1",
+                  "to": "txn:TX-0001",
+                  "type": "INITIATED",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-011"
+                },
+                {
+                  "from": "txn:TX-0001",
+                  "to": "acct:A2",
+                  "type": "SENDS_TO",
+                  "tier": "OBSERVED",
+                  "reliability": 0.98,
+                  "evidence_id": "EV-012"
+                },
+                {
+                  "from": "acct:A2",
+                  "to": "ip:203.0.113.45",
+                  "type": "OBSERVED_FROM",
+                  "tier": "OBSERVED",
+                  "reliability": 0.92,
+                  "evidence_id": "EV-002"
+                },
+                {
+                  "from": "ip:203.0.113.45",
+                  "to": "acct:A3",
+                  "type": "OBSERVED_FROM",
+                  "tier": "OBSERVED",
+                  "reliability": 0.92,
+                  "evidence_id": "EV-003"
+                }
+              ]
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-016",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-30T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0003 -[SENDS_TO]-> acct:A1",
+            "subject_ids": [
+              "txn:TX-0003",
+              "acct:A1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-015",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-30T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A3 -[INITIATED]-> txn:TX-0003",
+            "subject_ids": [
+              "acct:A3",
+              "txn:TX-0003"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-005",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A1 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A1",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-007",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A3 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A3",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-011",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A1 -[INITIATED]-> txn:TX-0001",
+            "subject_ids": [
+              "acct:A1",
+              "txn:TX-0001"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-012",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0001 -[SENDS_TO]-> acct:A2",
+            "subject_ids": [
+              "txn:TX-0001",
+              "acct:A2"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-013",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T18:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A2 -[INITIATED]-> txn:TX-0002",
+            "subject_ids": [
+              "acct:A2",
+              "txn:TX-0002"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-014",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T18:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0002 -[SENDS_TO]-> acct:A3",
+            "subject_ids": [
+              "txn:TX-0002",
+              "acct:A3"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-006",
+            "tier": "OBSERVED",
+            "reliability": 0.9,
+            "timestamp": "2026-09-29T07:00:00Z",
+            "source": "device_auth",
+            "relationship": "acct:A2 -[USES_DEVICE]-> dev:DEV-RING-1",
+            "subject_ids": [
+              "acct:A2",
+              "dev:DEV-RING-1"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-002",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:06:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A2 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A2",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-003",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:09:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A3 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A3",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "detect_cycles": {
+      "input": {
+        "account_id": "A1",
+        "min_len": 3,
+        "max_len": 5,
+        "window_hours": 72
+      },
+      "output": {
+        "ok": true,
+        "tool": "detect_cycles",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "account_id": "A1",
+          "cycles": [
+            {
+              "accounts": [
+                "acct:A1",
+                "acct:A2",
+                "acct:A3"
+              ],
+              "length": 3,
+              "span_hours": 24.0,
+              "txns": [
+                {
+                  "id": "TX-0001",
+                  "from": "acct:A1",
+                  "to": "acct:A2",
+                  "amount": 500,
+                  "timestamp": "2026-09-29T06:00:00Z",
+                  "evidence_id": "EV-011"
+                },
+                {
+                  "id": "TX-0002",
+                  "from": "acct:A2",
+                  "to": "acct:A3",
+                  "amount": 480,
+                  "timestamp": "2026-09-29T18:00:00Z",
+                  "evidence_id": "EV-013"
+                },
+                {
+                  "id": "TX-0003",
+                  "from": "acct:A3",
+                  "to": "acct:A1",
+                  "amount": 450,
+                  "timestamp": "2026-09-30T06:00:00Z",
+                  "evidence_id": "EV-015"
+                }
+              ],
+              "evidence_ids": [
+                "EV-011",
+                "EV-012",
+                "EV-013",
+                "EV-014",
+                "EV-015",
+                "EV-016"
+              ]
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-011",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A1 -[INITIATED]-> txn:TX-0001",
+            "subject_ids": [
+              "acct:A1",
+              "txn:TX-0001"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-012",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0001 -[SENDS_TO]-> acct:A2",
+            "subject_ids": [
+              "txn:TX-0001",
+              "acct:A2"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-013",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T18:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A2 -[INITIATED]-> txn:TX-0002",
+            "subject_ids": [
+              "acct:A2",
+              "txn:TX-0002"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-014",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-29T18:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0002 -[SENDS_TO]-> acct:A3",
+            "subject_ids": [
+              "txn:TX-0002",
+              "acct:A3"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-015",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-30T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "acct:A3 -[INITIATED]-> txn:TX-0003",
+            "subject_ids": [
+              "acct:A3",
+              "txn:TX-0003"
+            ],
+            "simulated": true
+          },
+          {
+            "id": "EV-016",
+            "tier": "OBSERVED",
+            "reliability": 0.98,
+            "timestamp": "2026-09-30T06:00:00Z",
+            "source": "simulated_ledger",
+            "relationship": "txn:TX-0003 -[SENDS_TO]-> acct:A1",
+            "subject_ids": [
+              "txn:TX-0003",
+              "acct:A1"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "past_cases": {
+      "input": {
+        "entity_id": "ip:198.51.100.77"
+      },
+      "output": {
+        "ok": true,
+        "tool": "past_cases",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "entity_id": "ip:198.51.100.77",
+          "cases": [
+            {
+              "case_id": "case-publicwifi1",
+              "created_at": "2026-09-11T00:00:00Z",
+              "band": "monitor",
+              "status": "CLOSED",
+              "outcome": "FALSE_POSITIVE",
+              "summary": "Simulated prior public Wi-Fi false positive"
+            }
+          ]
+        },
+        "evidence": [],
+        "error": null
+      }
+    },
+    "open_case": {
+      "input": {
+        "summary": "Review possible circular transfer pattern",
+        "entity_ids": [
+          "acct:A1",
+          "acct:A2"
+        ],
+        "evidence_ids": [
+          "EV-001"
+        ]
+      },
+      "output": {
+        "ok": true,
+        "tool": "open_case",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "case_id": "case-3ec892d6",
+          "status": "OPEN",
+          "linked_entities": [
+            "acct:A1",
+            "acct:A2"
+          ],
+          "linked_evidence": [
+            "EV-001"
+          ]
+        },
+        "evidence": [
+          {
+            "id": "EV-001",
+            "tier": "OBSERVED",
+            "reliability": 0.92,
+            "timestamp": "2026-09-29T06:03:00Z",
+            "source": "auth_logs",
+            "relationship": "acct:A1 -[OBSERVED_FROM]-> ip:203.0.113.45",
+            "subject_ids": [
+              "acct:A1",
+              "ip:203.0.113.45"
+            ],
+            "simulated": true
+          }
+        ],
+        "error": null
+      }
+    },
+    "propose_action": {
+      "input": {
+        "case_id": "case-publicwifi1",
+        "action_type": "MANUAL_REVIEW",
+        "rationale": "Human review required"
+      },
+      "output": {
+        "ok": true,
+        "tool": "propose_action",
+        "simulated": true,
+        "truncated": false,
+        "limits": {
+          "max_nodes": 50,
+          "max_hops": 4,
+          "timeout_s": 10
+        },
+        "data": {
+          "action_id": "act-d3482a23",
+          "case_id": "case-publicwifi1",
+          "type": "MANUAL_REVIEW",
+          "status": "PENDING_APPROVAL",
+          "rationale": "Human review required"
+        },
+        "evidence": [],
+        "error": null
+      }
+    }
+  }
+}
