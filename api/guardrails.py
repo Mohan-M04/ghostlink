@@ -9,6 +9,13 @@ def check_context(context, accounts, cycles):
     # Current service contract uses "indicators".
     indicators = context.get("indicators", [])
 
+    if context.get("is_public_network"):
+        penalties += 25
+        notes.append(
+            "The trigger IP is identified as a public network. "
+            "Shared public infrastructure alone is not evidence of fraud."
+        )
+
     if not indicators:
         notes.append(
             "No threat-feed indicator was returned. "

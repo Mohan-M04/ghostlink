@@ -7,6 +7,8 @@ load_dotenv()
 MODE=os.getenv('TOOL_MODE','mock').strip().lower()
 service=ToolService(mock=(MODE=='mock'))
 mcp=FastMCP('GhostLink MCP Server', json_response=True)
+mcp.settings.host=os.getenv('MCP_HOST','127.0.0.1')
+mcp.settings.port=int(os.getenv('MCP_PORT','8001'))
 @mcp.tool()
 def get_alert_context(ip: str) -> dict:
     """Return IP network context and associated simulated threat indicators."""

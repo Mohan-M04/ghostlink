@@ -2,5 +2,6 @@
 FalkorDB>=1.0.0
 # Pin to the v1 API: official FastMCP import is mcp.server.fastmcp.FastMCP.
 mcp[cli]>=1.28,<2
+google-genai>=1.0,<3
 python-dotenv>=1.0,<2
 pytest>=8,<9

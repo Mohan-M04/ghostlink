@@ -6,6 +6,65 @@
 
 This module owns the FalkorDB graph schema, deterministic data generator, idempotent loader, eight MCP tools, examples and graph tests. Inchara owns the agent/scoring/FastAPI layer; Jyothika owns the React UI.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    analyst["Analyst"]
+
+    subgraph browser["Browser · React / Vite"]
+        ui["Investigation workspace<br/>alerts · graph · evidence · trace · review"]
+        adapter["Backend adapter<br/>normalizes completed JSON report"]
+        ui <--> adapter
+    end
+
+    subgraph backend["Python backend · FastAPI :8000"]
+        api["/alerts · /investigate<br/>request validation and report assembly"]
+        agent["Bounded investigation agent<br/>tool loop · 12-call / 90-second limits"]
+        policy["Deterministic safety policy"]
+        validator["Candidate validation<br/>only currently allowed tool IDs"]
+        score["Scoring and guardrails<br/>provisional priority, not guilt"]
+        api --> agent
+        agent --> policy
+        agent --> validator
+        agent --> score
+    end
+
+    gemini["Optional Gemini function-calling planner<br/>selects one supplied candidate only"]
+
+    subgraph mcp["MCP boundary · Streamable HTTP :8001"]
+        client["MCP client"]
+        server["FastMCP server"]
+        tools["Read tools<br/>alert context · accounts on IP · shared devices<br/>paths · cycles · past cases"]
+        writes["Bounded write tools<br/>open case · propose action"]
+        service["ToolService<br/>fixed, validated, parameterized graph queries"]
+        client <--> server
+        server --> tools
+        server --> writes
+        tools --> service
+        writes --> service
+    end
+
+    graph[("FalkorDB<br/>synthetic accounts · IPs · devices · transactions<br/>evidence · cases · pending actions")]
+    loader["Dataset generator / graph loader"]
+
+    analyst --> ui
+    adapter -->|"POST /investigate · JSON report"| api
+    api -->|"completed report + explainable trace"| adapter
+    agent -. "candidate list + observed run state" .-> gemini
+    gemini -. "candidate ID only" .-> validator
+    policy -. "fallback candidate ID" .-> validator
+    validator --> client
+    service <--> graph
+    loader --> graph
+    score --> agent
+    writes -. "manual review only<br/>PENDING_APPROVAL" .-> graph
+```
+
+**Control and safety boundaries:** Gemini can choose only from the agent's current candidate list; it does not receive database credentials, issue Cypher, call MCP directly, or authorize an action. If Gemini is unavailable or returns an invalid choice, the deterministic policy selects a candidate. The backend validates the choice, applies bounded graph tools, and accepts evidence citations only when the evidence was returned during that investigation. Write tools are reserved for saving a case and proposing a human-review action; they do not block or deactivate accounts.
+
+**Demo behavior:** `/investigate` returns a completed JSON report, including the agent's plan/tool-result trace. The React adapter turns that returned trace into UI steps after the response arrives; the current backend does not stream each step live.
+
 ## Dependency/API assumption
 
 - Python 3.11 or newer.
@@ -56,16 +115,31 @@ Then set `.env` to `TOOL_MODE=mcp`, load data and initialize indexes:
 python -m graph.loader
 ```
 
-### Start the MCP server
+### Start the MCP server and API
 
-Mock mode is the safe default and needs no database:
+With FalkorDB running, copy `.env.example` to `.env`, set the graph connection
+values if needed, then start the MCP server in one PowerShell window:
 
 ```powershell
-$env:TOOL_MODE='mock'
+$env:TOOL_MODE='mcp'
+$env:MCP_TRANSPORT='streamable-http'
 python -m mcp_server.server
 ```
 
-For FalkorDB-backed tools, set `TOOL_MODE=mcp` after starting/loading FalkorDB. The default MCP transport is stdio. For local MCP Inspector experiments, set `MCP_TRANSPORT=streamable-http` and run the server; the SDK exposes its streamable HTTP endpoint. Do not expose it publicly without authentication/network controls.
+The HTTP MCP endpoint listens on `http://127.0.0.1:8001/mcp`. In a second
+PowerShell window, start the FastAPI backend:
+
+```powershell
+python -m uvicorn api.main:app --reload --port 8000
+```
+
+The API agent plans bounded graph queries through MCP, checks returned evidence,
+then saves the case and (when supported by returned evidence) proposes only a
+`PENDING_APPROVAL` manual-review action. If both Gemini settings are present,
+Gemini function calling selects among the currently allowed graph tools; without
+them the deterministic policy planner is used. Keep `GEMINI_API_KEY` in the
+backend-only, git-ignored `.env` file and never put it in the frontend environment.
+Do not expose the MCP server publicly without authentication/network controls.
 
 ## Graph schema
 
