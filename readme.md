@@ -4,7 +4,7 @@
 
 ## Ownership
 
-This module owns the FalkorDB graph schema, deterministic data generator, idempotent loader, eight MCP tools, examples and graph tests. Inchara owns the agent/scoring/FastAPI layer; Jyothika owns the React UI.
+This module owns the FalkorDB graph schema, deterministic data generator, idempotent loader, eight MCP tools, examples and graph tests. Inchara owns the agent/scoring/FastAPI layer; Jyothika owns the frontend and README docs.
 
 ## Architecture
 
@@ -45,7 +45,7 @@ flowchart LR
         writes --> service
     end
 
-    graph[("FalkorDB<br/>synthetic accounts · IPs · devices · transactions<br/>evidence · cases · pending actions")]
+    db["FalkorDB<br/>synthetic accounts · IPs · devices · transactions<br/>evidence · cases · pending actions"]
     loader["Dataset generator / graph loader"]
 
     analyst --> ui
@@ -55,21 +55,21 @@ flowchart LR
     gemini -. "candidate ID only" .-> validator
     policy -. "fallback candidate ID" .-> validator
     validator --> client
-    service <--> graph
-    loader --> graph
+    service <--> db
+    loader --> db
     score --> agent
-    writes -. "manual review only<br/>PENDING_APPROVAL" .-> graph
+    writes -. "manual review only<br/>PENDING_APPROVAL" .-> db
 ```
 
-**Control and safety boundaries:** Gemini can choose only from the agent's current candidate list; it does not receive database credentials, issue Cypher, call MCP directly, or authorize an action. If Gemini is unavailable or returns an invalid choice, the deterministic policy selects a candidate. The backend validates the choice, applies bounded graph tools, and accepts evidence citations only when the evidence was returned during that investigation. Write tools are reserved for saving a case and proposing a human-review action; they do not block or deactivate accounts.
+**Control and safety boundaries:** Gemini can choose only from the agent's current candidate list; it does not receive database credentials, issue Cypher, call MCP directly, or authorize an action. The backend validates each tool request with a fixed allowlist and parameter schema before the graph query runs.
 
-**Demo behavior:** `/investigate` returns a completed JSON report, including the agent's plan/tool-result trace. The React adapter turns that returned trace into UI steps after the response arrives; the current backend does not stream each step live.
+**Demo behavior:** `/investigate` returns a completed JSON report, including the agent's plan/tool-result trace. The React adapter turns that returned trace into UI steps after the response arrives.
 
 ## Dependency/API assumption
 
 - Python 3.11 or newer.
 - `FalkorDB` Python client, using `from falkordb import FalkorDB` and `graph.query(cypher, params, timeout=...)`.
-- Official MCP Python SDK **v1.x** using `from mcp.server.fastmcp import FastMCP`; `requirements.txt` pins `mcp[cli]>=1.28,<2` because the current SDK v2 renamed `FastMCP` to `MCPServer` and moved its import path. References: [MCP Python SDK v1 docs](https://py.sdk.modelcontextprotocol.io/v1/) and [FalkorDB Python client docs](https://falkordb-py.readthedocs.io/en/stable/falkordb.html).
+- Official MCP Python SDK **v1.x** using `from mcp.server.fastmcp import FastMCP`; `requirements.txt` pins `mcp[cli]>=1.28,<2` because the current SDK v2 renamed `FastMCP` to `MCPServer` and moved the transport API.
 
 ## Quick start (Windows PowerShell)
 
@@ -143,9 +143,7 @@ Do not expose the MCP server publicly without authentication/network controls.
 
 ## Graph schema
 
-Nodes: `Account(id, created_at_ts)`, `IP(addr, city, is_public_network, network_kind)`, `Device(id, device_type)`, `Txn(id, amount, ts)`, `ThreatIndicator(id, feed, severity, seen_at_ts, expires_at_ts, reliability, note)`, `Case(id, score, band, status, created_at_ts, outcome, summary)`, `Evidence(id, tier, reliability, ts, source, relationship, subject_ids, simulated)`, and `Action(id, type, status, rationale, created_at_ts, decided_at_ts, decided_by)`.
-
-Relationships: `OBSERVED_FROM`, `USES_DEVICE`, `INITIATED`, `SENDS_TO`, `FLAGGED_BY`, inferred `LINKED_TO`, `HAS_EVIDENCE`, `ABOUT`, and `PROPOSES`. Loader uses `MERGE` and stable IDs. Indexes are attempted for Account.id, IP.addr, Device.id, Txn.id/ts, ThreatIndicator.id, Evidence.id, Case.id, Action.id; unsupported/duplicate index responses are reported by `ensure_schema`.
+Nodes: `Account(id, created_at_ts)`, `IP(addr, city, is_public_network, network_kind)`, `Device(id, device_type)`, `Txn(id, amount, ts)`, `ThreatIndicator(id, feed, severity, seen_at_ts, expires_at_ts)`, `Case(id, summary, score, band, status)`, `Action(id, type, status, rationale)`. Relationships: `OBSERVED_FROM`, `USES_DEVICE`, `INITIATED`, `SENDS_TO`, `FLAGGED_BY`, inferred `LINKED_TO`, `HAS_EVIDENCE`, `ABOUT`, and `PROPOSES`. Loader uses `MERGE` and stable IDs. Indexes are created for account/IP/device IDs and time windows.
 
 ## Tool names and contracts
 
@@ -158,7 +156,7 @@ Relationships: `OBSERVED_FROM`, `USES_DEVICE`, `INITIATED`, `SENDS_TO`, `FLAGGED
 7. `open_case(summary, entity_ids, evidence_ids, score=null, band=null)`
 8. `propose_action(case_id, action_type, rationale='')`
 
-All tools return JSON envelope fields: `ok`, `tool`, `simulated`, `truncated`, `limits`, `data`, `evidence`, `error`. Tool examples for Inchara's mock adapter are in `data/fixtures/tool_examples.json`. The examples are explicitly illustrative, not outputs from a live DB.
+All tools return JSON envelope fields: `ok`, `tool`, `simulated`, `truncated`, `limits`, `data`, `evidence`, `error`. Tool examples for the mock adapter are in `data/fixtures/tool_examples.json`.
 
 ## Useful Cypher queries
 
@@ -187,8 +185,8 @@ RETURN a.id, t.id, t.amount, t.ts, b.id LIMIT 2000;
 
 ## Environment variables
 
-See `.env.example`: `FALKORDB_HOST`, `FALKORDB_PORT`, `FALKORDB_PASSWORD`, `GRAPH_NAME`, `HUB_DEGREE_THRESHOLD`, `QUERY_TIMEOUT_MS`, `GHOSTLINK_NOW`, `TOOL_MODE`. `TOOL_MODE=mock` is default; `TOOL_MODE=mcp` connects to FalkorDB.
+See `.env.example`: `FALKORDB_HOST`, `FALKORDB_PORT`, `FALKORDB_PASSWORD`, `GRAPH_NAME`, `HUB_DEGREE_THRESHOLD`, `QUERY_TIMEOUT_MS`, `GHOSTLINK_NOW`, `TOOL_MODE`. `TOOL_MODE=mock` is default; `TOOL_MODE=mcp` uses the server-backed tool layer.
 
 ## Test status
 
-Run `python -m pytest -q`. Unit tests use deterministic mock data and do not require Docker. A live FalkorDB integration run must be done separately after Docker is running; do not claim it passed unless it has been run.
+Run `python -m pytest -q`. Unit tests use deterministic mock data and do not require Docker. A live FalkorDB integration run must be done separately after Docker is running; do not claim it passes without that environment.
